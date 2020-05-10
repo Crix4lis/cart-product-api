@@ -45,3 +45,21 @@ services:
             $products: '@repo' # todo
         tags:
             - { name: tactician.handler, typehints: true }
+    Task\App\Catalogue\Application\CreateNewProductHandler:
+        class: Task\App\Catalogue\Application\CreateNewProductHandler
+        arguments:
+            $products: '@repo' # todo
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Catalogue\Application\RemoveProductHandler:
+        class: Task\App\Catalogue\Application\RemoveProductHandler
+        arguments:
+            $products: '@repo' # todo
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Catalogue\Application\EditProductHandler:
+        class: Task\App\Catalogue\Application\EditProductHandler
+        arguments:
+            $products: '@repo' # todo
+        tags:
+            - { name: tactician.handler, typehints: true }
