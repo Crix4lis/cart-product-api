@@ -8,7 +8,7 @@ use Money\Money;
 
 class Price
 {
-    private string $surrogateAmount;
+    private string $surrogateAmount; //todo: change to integer. It'll be easier to sum on db
     private string $surrogateCurrency;
     private ?Money $price;
 
