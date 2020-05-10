@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Task\Test\Common;
+namespace Task\Tests\Common;
 
 use PHPUnit\Framework\TestCase;
 use Task\App\Common\Price\Price;
