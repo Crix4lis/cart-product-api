@@ -25,3 +25,23 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    ## handlers
+    Task\App\Cart\Application\CreateNewCartHandler:
+        class: Task\App\Cart\Application\CreateNewCartHandler
+        arguments:
+            $products: '@repo' # todo
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Cart\Application\AddProductToCartHandler:
+        class: Task\App\Cart\Application\AddProductToCartHandler
+        arguments:
+            $products: '@repo' # todo
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Cart\Application\RemoveProductFromCartHandler:
+        class: Task\App\Cart\Application\RemoveProductFromCartHandler
+        arguments:
+            $products: '@repo' # todo
+        tags:
+            - { name: tactician.handler, typehints: true }
