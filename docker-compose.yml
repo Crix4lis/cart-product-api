@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  cli:
+    build:
+      context: ./docker
+    volumes:
+      - .:/volume
+    stdin_open: true
+    tty: true
+    ports:
+    - 8000:8000
+
+  psqldb:
+    image: postgres:12.1-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: topsecret
+      POSTGRES_USER: user
+      POSTGRES_DB: public
+    ports:
+      - 8001:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8002:8080

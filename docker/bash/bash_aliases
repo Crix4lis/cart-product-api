@@ -1,0 +1,5 @@
+alias c='clear'
+alias q='exit'
+alias s='php bin/console'
+alias xdebugstart='export XDEBUG_CONFIG="idekey=PHPSTORM" && echo -e "\033[1m\033[34mDebuggin mode is ON \033[0m"'
+alias xdebugstop='unset XDEBUG_CONFIG && echo -e "\033[1m\033[34mDebuggin mode is OFF \033[0m"'
