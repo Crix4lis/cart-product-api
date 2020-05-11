@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Task\App\Cart\Domain\Event;
 
 use Task\App\Common\Event\DomainEvent;
+use Task\App\Common\Event\PersistableEvent;
 
 class NewCartCreated implements DomainEvent
 {
@@ -24,5 +25,16 @@ class NewCartCreated implements DomainEvent
     public function getCartProductReference(): string
     {
         return $this->cartProductReference;
+    }
+
+    public function getPersistableEvent(): PersistableEvent
+    {
+        return new PersistableEvent(
+            [
+                'newCartId' => $this->getNewCartId(),
+                'newCartProductReference' => $this->getCartProductReference(),
+            ],
+            'cart/cart-created'
+        );
     }
 }

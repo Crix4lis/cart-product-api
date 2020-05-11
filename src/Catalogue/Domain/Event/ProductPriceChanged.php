@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Task\App\Catalogue\Domain\Event;
 
 use Task\App\Common\Event\DomainEvent;
+use Task\App\Common\Event\PersistableEvent;
 
 class ProductPriceChanged implements DomainEvent
 {
@@ -31,5 +32,17 @@ class ProductPriceChanged implements DomainEvent
     public function getNewProductPriceCurrency(): string
     {
         return $this->newProductPriceCurrency;
+    }
+
+    public function getPersistableEvent(): PersistableEvent
+    {
+        return new PersistableEvent(
+            [
+                'productId' => $this->getProductId(),
+                'productPriceAmount' => $this->getNewProductPriceAmount(),
+                'productPriceCurrency' => $this->getNewProductPriceCurrency()
+            ],
+            'catalogue/product-price-changed'
+        );
     }
 }

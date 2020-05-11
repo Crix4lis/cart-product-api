@@ -5,5 +5,5 @@ namespace Task\App\Common\Event;
 
 interface DomainEvent
 {
-
+    public function getPersistableEvent(): PersistableEvent;
 }

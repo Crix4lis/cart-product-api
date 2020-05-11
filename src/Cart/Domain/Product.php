@@ -5,6 +5,7 @@ namespace Task\App\Cart\Domain;
 
 class Product
 {
+    private string $surrogateId;
     private string $productId;
 
     public function __construct(string $productId)

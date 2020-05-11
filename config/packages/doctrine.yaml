@@ -9,10 +9,24 @@ doctrine:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
-#        mappings:
-#            App:
-#                is_bundle: false
-#                type: annotation
-#                dir: '%kernel.project_dir%/src/Entity'
-#                prefix: 'App\Entity'
-#                alias: App
+        mappings:
+            Task\App\Cart\Domain:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/config/doctrine_mapping/cart'
+                prefix: 'Task\App\Cart\Domain'
+            Task\App\Catalogue\Domain:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/config/doctrine_mapping/catalogue'
+                prefix: 'Task\App\Catalogue\Domain'
+            Task\App\Common\Event:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/config/doctrine_mapping/common/event'
+                prefix: 'Task\App\Common\Event'
+            Task\App\Common\Price:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/config/doctrine_mapping/common/price'
+                prefix: 'Task\App\Common\Price'

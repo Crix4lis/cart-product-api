@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Task\App\Common\Event\PersistableEvent"
+            table="event_store"
+            repository-class="Task\App\Common\Event\DoctrineEventStore" >
+
+        <id name="surrogateEventId" type="string" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="eventBody" column="body" type="string" nullable="false"/>
+        <field name="occurredOn" column="occured_on" type="datetime_immutable" nullable="false"/>
+        <field name="typeName" column="type" type="string" nullable="false"/>
+    </entity>
+
+</doctrine-mapping>

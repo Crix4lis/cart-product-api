@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Task\App\Catalogue\Domain\Event;
 
 use Task\App\Common\Event\DomainEvent;
+use Task\App\Common\Event\PersistableEvent;
 
 class ProductRemoved implements DomainEvent
 {
@@ -17,5 +18,15 @@ class ProductRemoved implements DomainEvent
     public function getRemovedProductId(): string
     {
         return $this->removedProductId;
+    }
+
+    public function getPersistableEvent(): PersistableEvent
+    {
+        return new PersistableEvent(
+            [
+                'removedProductId' => $this->getRemovedProductId(),
+            ],
+            'catalogue/product-removed'
+        );
     }
 }

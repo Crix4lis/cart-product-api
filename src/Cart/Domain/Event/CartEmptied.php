@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Task\App\Cart\Domain\Event;
 
-class CartEmptied
+use Task\App\Common\Event\DomainEvent;
+use Task\App\Common\Event\PersistableEvent;
+
+class CartEmptied implements DomainEvent
 {
     private string $cartId;
 
@@ -15,5 +18,15 @@ class CartEmptied
     public function getCartId(): string
     {
         return $this->cartId;
+    }
+
+    public function getPersistableEvent(): PersistableEvent
+    {
+        return new PersistableEvent(
+            [
+                'emptiedCartId' => $this->getCartId(),
+            ],
+            'cart/cart-emptied'
+        );
     }
 }

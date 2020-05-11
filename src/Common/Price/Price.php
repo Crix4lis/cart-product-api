@@ -8,7 +8,7 @@ use Money\Money;
 
 class Price
 {
-    private string $surrogateAmount; //todo: change to integer. It'll be easier to sum on db
+    private int $surrogateAmount;
     private string $surrogateCurrency;
     private ?Money $price;
 
@@ -41,14 +41,17 @@ class Price
     private function __construct(Money $price)
     {
         $this->price = $price;
-        $this->surrogateAmount = $price->getAmount();
+        $this->surrogateAmount = (int) ((float) $price->getAmount());
         $this->surrogateCurrency = (string) $price->getCurrency();
     }
 
     private function createMoneyInstance(): void
     {
         if ($this->price === null) {
-            $this->price = new Money($this->surrogateAmount, new Currency($this->surrogateCurrency));
+            $this->price = new Money(
+                (string) ((float) $this->surrogateAmount),
+                new Currency($this->surrogateCurrency)
+            );
         }
     }
 }
