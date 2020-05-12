@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Task\App\Cart\UI\Controller;
 
 use League\Tactician\CommandBus;
+use PHPUnit\Util\Json;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +13,7 @@ use Task\App\Cart\Application\CreateNewCartCommand;
 use Task\App\Cart\Application\RemoveProductFromCartCommand;
 use Task\App\Cart\Domain\Exception\ProductNotFoundInCart;
 use Task\App\Cart\Domain\Exception\TooManyProductsInCartException;
+use Task\App\Cart\Infrastructure\Query\GetAllCartsQuery;
 use Task\App\Cart\Infrastructure\Query\GetCartProductsQuery;
 use Task\App\Cart\UI\Validator\AddProductValidator;
 use Task\App\Cart\UI\Validator\CartBaseValidator;
@@ -136,5 +138,12 @@ class CartRestController extends AbstractController
         $result = $query->execute($id, $page);
 
         return new JsonResponse($result);
+    }
+
+    public function getCarts(
+        GetAllCartsQuery $query
+    ): JsonResponse
+    {
+        return new JsonResponse($query->execute());
     }
 }

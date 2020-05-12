@@ -25,41 +25,66 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+#    Task\App\Catalogue\Infrastructure\Factory\ProductEventPublisherFactory: ~
 
-    ## handlers
+    Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator:
+        class: Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator
+        arguments:
+            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+            $eventPublisher: '@Task\App\Cart\Infrastructure\EventPublisher\CartEventPublisher'
+
+    Task\App\Catalogue\Infrastructure\Repository\EventsPublisherProductsDecorator:
+        class: Task\App\Catalogue\Infrastructure\Repository\EventsPublisherProductsDecorator
+        arguments:
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+            $eventPublisher: '@Task\App\Catalogue\Infrastructure\EventPublisher\ProductEventPublisher'
+
+    ## configure domain event publishers and its subscribers
+    ## add to arguments key your custom and additional subscribers
+    Task\App\Cart\Infrastructure\EventPublisher\CartEventPublisher:
+        factory: ['@Task\App\Cart\Infrastructure\Factory\CartEventPublisherFactory', 'create']
+        arguments:
+            - '@Task\App\Cart\Infrastructure\EventSubscriber\ExamplePrintHelloAllEventSubscriber'
+
+    Task\App\Catalogue\Infrastructure\EventPublisher\ProductEventPublisher:
+        factory: ['@Task\App\Catalogue\Infrastructure\Factory\ProductEventPublisherFactory', 'create']
+        arguments:
+            - '@Task\App\Catalogue\Infrastructure\EventSubscriber\ExamplePrintHelloAllEventSubscriber'
+
+    ## tactician command bus handlers configuration
     Task\App\Cart\Application\CreateNewCartHandler:
         class: Task\App\Cart\Application\CreateNewCartHandler
         arguments:
-            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+            $carts: '@Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator'
         tags:
             - { name: tactician.handler, typehints: true }
     Task\App\Cart\Application\AddProductToCartHandler:
         class: Task\App\Cart\Application\AddProductToCartHandler
         arguments:
-            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+            $carts: '@Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator'
         tags:
             - { name: tactician.handler, typehints: true }
     Task\App\Cart\Application\RemoveProductFromCartHandler:
         class: Task\App\Cart\Application\RemoveProductFromCartHandler
         arguments:
-            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+            $carts: '@Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator'
         tags:
             - { name: tactician.handler, typehints: true }
     Task\App\Catalogue\Application\CreateNewProductHandler:
         class: Task\App\Catalogue\Application\CreateNewProductHandler
         arguments:
-            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\EventsPublisherProductsDecorator'
         tags:
             - { name: tactician.handler, typehints: true }
     Task\App\Catalogue\Application\RemoveProductHandler:
         class: Task\App\Catalogue\Application\RemoveProductHandler
         arguments:
-            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\EventsPublisherProductsDecorator'
         tags:
             - { name: tactician.handler, typehints: true }
     Task\App\Catalogue\Application\EditProductHandler:
         class: Task\App\Catalogue\Application\EditProductHandler
         arguments:
-            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\EventsPublisherProductsDecorator'
         tags:
             - { name: tactician.handler, typehints: true }

@@ -42,3 +42,8 @@ cart_get_cart_products:
     path: /carts/{id}/products
     controller: Task\App\Cart\UI\Controller\CartRestController::getCartProducts
     methods: GET
+
+cart_get_carts:
+    path: /carts
+    controller: Task\App\Cart\UI\Controller\CartRestController::getCarts
+    methods: GET

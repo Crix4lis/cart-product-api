@@ -30,7 +30,7 @@ class GetCartProductsQuery extends ServiceEntityRepository
      *
      * @throws NotFoundException
      */
-    public function execute(string $cartUuid, int $page)
+    public function execute(string $cartUuid, int $page): array
     {
         if ($page <= 0) {
             throw new InvalidInputException();
