@@ -8,6 +8,11 @@ catalogue_get_products:
     controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::getList
     methods: GET
 
+catalogue_get_product:
+    path: /products/{id}
+    controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::getSingle
+    methods: GET
+
 catalogue_remove_product:
     path: /products/{id}
     controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::remove

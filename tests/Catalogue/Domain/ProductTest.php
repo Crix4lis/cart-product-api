@@ -11,14 +11,15 @@ use Task\App\Catalogue\Domain\Event\ProductRemoved;
 use Task\App\Catalogue\Domain\Event\ProductTitleChanged;
 use Task\Tests\ExampleData\CatalogueProductBuilder;
 use Task\Tests\ExampleData\PriceBuilder;
+use Task\Tests\ExampleData\UuidMotherObject;
 
 class ProductTest extends TestCase
 {
     public function productsDataProvider(): array
     {
         return [
-            'Fallout' => ['1', 'Fallout', '199'],
-            'Dont\'t Starve' => ['2', 'Don\'t Starve', '299'],
+            'Fallout' => [UuidMotherObject::createFirst(), 'Fallout', '199'],
+            'Dont\'t Starve' => [UuidMotherObject::createSecond(), 'Don\'t Starve', '299'],
          ];
     }
 
@@ -116,5 +117,70 @@ class ProductTest extends TestCase
         $events = $product->getEvents();
 
         $this->assertEquals($expectedEvent, end($events));
+    }
+
+    public function testThrowsExceptionWhenTriesToCreateProductWithoutUuid(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Product::createNew('1', 'The title', PriceBuilder::price()->build());
+    }
+
+    public function testThrowsExceptionWhenTriesToCreateProductWithEmptyTitle(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Product::createNew(UuidMotherObject::createFirst(), '', PriceBuilder::price()->build());
+    }
+
+    public function testThrowsExceptionWhenTriesToCreateProductWithPriceAmountZero(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Product::createNew(
+            UuidMotherObject::createFirst(),
+            'The title',
+            PriceBuilder::price()->withAmount('0')->build()
+        );
+    }
+
+    /**
+     * @dataProvider productsDataProvider
+     */
+    public function testThrowsExceptionWhenTriesToChangeTitleForEmpty(
+        string $id,
+        string $title,
+        string $priceValue
+    ): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $product = CatalogueProductBuilder::product()
+            ->withId($id)
+            ->withTitle($title)
+            ->withPriceAmount($priceValue)
+            ->build();
+
+        $product->changeProductTitle('');
+    }
+
+    /**
+     * @dataProvider productsDataProvider
+     */
+    public function testThrowsExceptionWhenTriesToChangePriceAmountForZero(
+        string $id,
+        string $title,
+        string $priceValue
+    ): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $product = CatalogueProductBuilder::product()
+            ->withId($id)
+            ->withTitle($title)
+            ->withPriceAmount($priceValue)
+            ->build();
+
+        $product->changeProductPrice(
+            PriceBuilder::price()->withAmount('0')->build()
+        );
     }
 }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Task\App\Common\Exception;
 
-class ConflictException extends UIException
+class ConflictException extends RuntimeException
 {
     public function __construct($message = "Such entity already exists")
     {

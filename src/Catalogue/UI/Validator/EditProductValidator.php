@@ -3,39 +3,36 @@ declare(strict_types=1);
 
 namespace Task\App\Catalogue\UI\Validator;
 
+use Task\App\Common\Exception\InvalidInputException;
+
 class EditProductValidator extends ProductBaseValidator
 {
-    public function validate(array $input): bool
+    /**
+     * @param array $input
+     *
+     * @throws InvalidInputException
+     */
+    public function validate(array $input): void
     {
-        $titleKeyGone = false;
-        $amountKeyGone = false;
+        $titleKeyExists = $this->titleKeyExists($input);
+        $amountKeyExists = $this->amountKeyExists($input);
 
-        if (false === $this->idKeyExists($input)) {
-            return false;
+        if (false === $titleKeyExists && false === $amountKeyExists) {
+            throw new InvalidInputException();
         }
 
-        if (false === $this->validateIfFieldIsNonEmptyString($input[self::ID_KEY])) {
-            return false;
-        }
-
-        if ($titleKeyGone = false === $this->titleKeyExists($input) &&
-            $amountKeyGone = false === $this->amountKeyExists($input)
+        //if title exists - validate it
+        if (true === $titleKeyExists &&
+            false === $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY])
         ) {
-            return false;
+            throw new InvalidInputException();
         }
 
-        //if title gone, validate amount
-        if (true === $titleKeyGone) {
-            return $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY]);
+        //if amount exists - validate it
+        if (true === $amountKeyExists
+            && false === $this->validateAmount($input[self::AMOUNT_KEY])
+        ) {
+            throw new InvalidInputException();
         }
-
-        //if amount gone, validate title
-        if (true === $amountKeyGone ) {
-            return $this->validateAmount($input[self::AMOUNT_KEY]);
-        }
-
-        // if title and amount not gone, validate both
-        return $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY]) &&
-            $this->validateAmount($input[self::AMOUNT_KEY]);
     }
 }

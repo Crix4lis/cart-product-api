@@ -3,7 +3,14 @@ declare(strict_types=1);
 
 namespace Task\App\Common\Validator;
 
+use Task\App\Common\Exception\InvalidInputException;
+
 interface Validator
 {
-    public function validate(array $input): bool;
+    /**
+     * @param array $input
+     *
+     * @throws InvalidInputException
+     */
+    public function validate(array $input): void;
 }

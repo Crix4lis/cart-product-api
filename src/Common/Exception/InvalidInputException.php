@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Task\App\Common\Exception;
 
-class InvalidInputException extends UIException
+class InvalidInputException extends RuntimeException
 {
     public function __construct($message = "Invalid user input")
     {

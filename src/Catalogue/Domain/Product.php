@@ -10,6 +10,7 @@ use Task\App\Catalogue\Domain\Event\ProductTitleChanged;
 use Task\App\Common\Event\AggregateWithEvents;
 use Task\App\Common\Event\DomainEvent;
 use Task\App\Common\Price\Price;
+use Webmozart\Assert\Assert;
 
 class Product implements AggregateWithEvents
 {
@@ -20,8 +21,20 @@ class Product implements AggregateWithEvents
     /** @var DomainEvent[] */
     private array $events = [];
 
+    /**
+     * @param string $newProductId
+     * @param string $newProductTitle
+     * @param Price $newProductPrice
+     *
+     * @return Product
+     *
+     * @throws \InvalidArgumentException
+     */
     public static function createNew(string $newProductId, string $newProductTitle, Price $newProductPrice): Product
     {
+        Assert::uuid($newProductId);
+        Assert::notEmpty($newProductTitle);
+        Assert::greaterThan((int) $newProductPrice->getAmount(), 0);
         $newProduct = new self($newProductId, $newProductTitle, $newProductPrice);
 
         $newProduct->isRemoved = false;
@@ -35,14 +48,26 @@ class Product implements AggregateWithEvents
         return $newProduct;
     }
 
+    /**
+     * @param string $newProductTitle
+     *
+     * @throws \InvalidArgumentException
+     */
     public function changeProductTitle(string $newProductTitle): void
     {
+        Assert::notEmpty($newProductTitle);
         $this->title = $newProductTitle;
         $this->events[] = new ProductTitleChanged($this->getId(), $this->getTitle());
     }
 
+    /**
+     * @param Price $newPrice
+     *
+     * @throws \InvalidArgumentException
+     */
     public function changeProductPrice(Price $newPrice): void
     {
+        Assert::greaterThan((int) $newPrice->getAmount(), 0);
         $this->price = $newPrice;
         $this->events[] = new ProductPriceChanged(
             $this->getId(),
@@ -77,6 +102,11 @@ class Product implements AggregateWithEvents
     public function getPrice(): Price
     {
         return $this->price;
+    }
+
+    public function isToBeRemoved(): bool
+    {
+        return $this->isRemoved;
     }
 
     public function getEvents(): array

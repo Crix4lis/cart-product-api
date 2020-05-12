@@ -12,6 +12,7 @@ use Task\App\Cart\Domain\Event\NewCartCreated;
 use Task\App\Cart\Domain\Event\ProductAdded;
 use Task\App\Cart\Domain\Event\ProductRemoved;
 use Task\Tests\ExampleData\CartBuilder;
+use Task\Tests\ExampleData\UuidMotherObject;
 
 class CartTest extends TestCase
 {
@@ -28,6 +29,7 @@ class CartTest extends TestCase
      */
     public function testCreatesCart(string $cartId, string $productId): void
     {
+        UuidMotherObject::createOne();
         $expectedEvent = new NewCartCreated($cartId, $productId);
 
         $cart = Cart::createNewCart($cartId, new Product($productId));

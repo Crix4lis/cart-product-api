@@ -3,19 +3,30 @@ declare(strict_types=1);
 
 namespace Task\App\Catalogue\UI\Validator;
 
+use Task\App\Common\Exception\InvalidInputException;
+
 class CreateProductValidator extends ProductBaseValidator
 {
-    public function validate(array $input): bool
+    /**
+     * @param array $input
+     *
+     * @throws InvalidInputException
+     */
+    public function validate(array $input): void
     {
         if (false === $this->titleKeyExists($input)) {
-            return false;
+            throw new InvalidInputException();
         }
 
         if (false === $this->amountKeyExists($input)) {
-            return false;
+            throw new InvalidInputException();
         }
 
-        return $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY]) &&
-            $this->validateAmount($input[self::AMOUNT_KEY]);
+        if(false === (
+            $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY]) &&
+            $this->validateAmount($input[self::AMOUNT_KEY]))
+        ) {
+            throw new InvalidInputException();
+        }
     }
 }

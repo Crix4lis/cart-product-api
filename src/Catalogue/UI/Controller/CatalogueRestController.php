@@ -10,16 +10,34 @@ use Symfony\Component\HttpFoundation\Request;
 use Task\App\Catalogue\Application\CreateNewProductCommand;
 use Task\App\Catalogue\Application\EditProductCommand;
 use Task\App\Catalogue\Application\RemoveProductCommand;
-use Task\App\Catalogue\Infrastructure\Query\GetManyQuery;
+use Task\App\Catalogue\Infrastructure\Query\GetManyProductsQuery;
+use Task\App\Catalogue\Infrastructure\Query\GetSingleProductQuery;
 use Task\App\Catalogue\UI\Validator\CreateProductValidator;
 use Task\App\Catalogue\UI\Validator\EditProductValidator;
 use Task\App\Catalogue\UI\Validator\ProductBaseValidator;
+use Task\App\Common\Exception\ConflictException;
+use Task\App\Common\Exception\DataLayerException;
 use Task\App\Common\Exception\InvalidInputException;
+use Task\App\Common\Exception\NotFoundException;
 use Task\App\Common\Generator\UuidGenerator;
 use Task\App\Common\Parser\Parser;
 
 class CatalogueRestController extends AbstractController
 {
+    /**
+     * @param Request $request
+     * @param CommandBus $commandBus
+     * @param Parser $parser
+     * @param CreateProductValidator $validator
+     * @param UuidGenerator $uuidGenerator
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws InvalidInputException
+     */
     public function create(
         Request $request,
         CommandBus $commandBus,
@@ -29,21 +47,15 @@ class CatalogueRestController extends AbstractController
     ): JsonResponse
     {
         $data = $parser->parse($request->getContent());
-        if (false === $validator->validate($data)) {
-            throw new InvalidInputException();
-        }
+        $validator->validate($data);
 
         $newProductId = $uuidGenerator->generate();
         $cmd = new CreateNewProductCommand(
             $newProductId,
-            ProductBaseValidator::TITLE_KEY,
-            ProductBaseValidator::AMOUNT_KEY
+            $data[ProductBaseValidator::TITLE_KEY],
+            $data[ProductBaseValidator::AMOUNT_KEY]
         );
-//        try {
-            $commandBus->handle($cmd);
-//        } catch () {
-//            throw new ConflictException(sprintf("Product with title %s already exists", $data['title']));
-//        }
+        $commandBus->handle($cmd);
 
         return new JsonResponse(
             ['new_product_id' => $newProductId],
@@ -52,22 +64,44 @@ class CatalogueRestController extends AbstractController
         );
     }
 
+    /**
+     * @param string $id
+     * @param CommandBus $commandBus
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws InvalidInputException
+     */
     public function remove(
         string $id,
         CommandBus $commandBus
     ): JsonResponse
     {
         $cmd = new RemoveProductCommand($id);
-//        try {
-            $commandBus->handle($cmd);
-//        } catch () {
-//            throw new NotFoundException();
-//        }
+        $commandBus->handle($cmd);
 
         return new JsonResponse([],200);
     }
 
+    /**
+     * @param string $id
+     * @param Request $request
+     * @param CommandBus $commandBus
+     * @param Parser $parser
+     * @param EditProductValidator $validator
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws InvalidInputException
+     */
     public function edit(
+        string $id,
         Request $request,
         CommandBus $commandBus,
         Parser $parser,
@@ -75,38 +109,46 @@ class CatalogueRestController extends AbstractController
     ): JsonResponse
     {
         $data = $parser->parse($request->getContent());
-        if (false === $validator->validate($data)) {
-            throw new InvalidInputException();
-        }
+        $validator->validate($data);
 
         $cmd = new EditProductCommand(
-            ProductBaseValidator::ID_KEY,
-            ProductBaseValidator::TITLE_KEY,
-            ProductBaseValidator::AMOUNT_KEY
+            $id,
+            $data[ProductBaseValidator::TITLE_KEY] ?? null,
+            $data[ProductBaseValidator::AMOUNT_KEY] ?? null
         );
-//        try {
-            $commandBus->handle($cmd);
-//        } catch () {
-//            throw new ConflictException(sprintf("Product with title %s already exists", $data['title']));
-//        } catch () {
-//            throw new NotFoundException();
-//        }
+        $commandBus->handle($cmd);
 
         return new JsonResponse();
     }
 
-    public function getList(Request $request, GetManyQuery $query): JsonResponse
+    /**
+     * @param Request $request
+     * @param GetManyProductsQuery $query
+     *
+     * @return JsonResponse
+     *
+     * @throws InvalidInputException
+     */
+    public function getList(Request $request, GetManyProductsQuery $query): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
+        $result = $query->execute($page);
 
-        return new JsonResponse('OK');
+        return new JsonResponse($result);
+    }
 
-//        try {
-            $result = $query->execute($page);
-//        } catch () {
-//            throw new NotFoundException();
-//        }
+    /**
+     * @param string $id
+     * @param GetSingleProductQuery $query
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundException
+     */
+    public function getSingle(string $id, GetSingleProductQuery $query): JsonResponse
+    {
+        $result = $query->execute($id);
 
-        return new JsonResponse($request);
+        return new JsonResponse($result);
     }
 }

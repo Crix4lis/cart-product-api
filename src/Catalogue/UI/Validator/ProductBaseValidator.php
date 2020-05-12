@@ -7,14 +7,8 @@ use Task\App\Common\Validator\Validator;
 
 abstract class ProductBaseValidator implements Validator
 {
-    public const ID_KEY = 'id';
     public const TITLE_KEY = 'title';
     public const AMOUNT_KEY = 'price_amount';
-
-    protected function idKeyExists($input): bool
-    {
-        return array_key_exists(self::ID_KEY, $input);
-    }
 
     protected function titleKeyExists($input): bool
     {

@@ -5,6 +5,10 @@ namespace Task\App\Catalogue\Application;
 
 use Task\App\Catalogue\Domain\Product;
 use Task\App\Catalogue\Domain\Products;
+use Task\App\Common\Exception\ConflictException;
+use Task\App\Common\Exception\DataLayerException;
+use Task\App\Common\Exception\InvalidInputException;
+use Task\App\Common\Exception\NotFoundException;
 use Task\App\Common\Price\Price;
 
 class CreateNewProductHandler
@@ -16,13 +20,26 @@ class CreateNewProductHandler
         $this->products = $products;
     }
 
+    /**
+     * @param CreateNewProductCommand $command
+     *
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws InvalidInputException
+     */
     public function handle(CreateNewProductCommand $command): void
     {
-        $product = Product::createNew(
-            $command->getNewProductId(),
-            $command->getTitle(),
-            Price::createUSD($command->getPriceAmount())
-        );
+        try {
+            $product = Product::createNew(
+                $command->getNewProductId(),
+                $command->getTitle(),
+                Price::createUSD($command->getPriceAmount())
+            );
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidInputException();
+        }
+
         $this->products->save($product);
     }
 }
