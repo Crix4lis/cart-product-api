@@ -15,18 +15,29 @@ class CreateProductValidator extends ProductBaseValidator
     public function validate(array $input): void
     {
         if (false === $this->titleKeyExists($input)) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf(
+                "Key %s and %s must both be provided",
+                self::TITLE_KEY,
+                self::AMOUNT_KEY
+            ));
         }
 
         if (false === $this->amountKeyExists($input)) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf(
+                "Key %s and %s must both be provided",
+                self::TITLE_KEY,
+                self::AMOUNT_KEY
+            ));
         }
 
         if(false === (
             $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY]) &&
             $this->validateAmount($input[self::AMOUNT_KEY]))
         ) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(
+                "Product title must not be empty string and ".
+                "Product price amount must be provided as integerish string of cents. Ex.: \"500\" meaning 5.00$"
+            );
         }
     }
 }

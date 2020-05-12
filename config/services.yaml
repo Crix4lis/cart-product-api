@@ -25,8 +25,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-#    Task\App\Catalogue\Infrastructure\Factory\ProductEventPublisherFactory: ~
-
     Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator:
         class: Task\App\Cart\Infrastructure\Repository\EventsPublisherCartsDecorator
         arguments:
@@ -38,6 +36,11 @@ services:
         arguments:
             $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
             $eventPublisher: '@Task\App\Catalogue\Infrastructure\EventPublisher\ProductEventPublisher'
+
+    ## symfony kernel events listeners
+    Task\App\Common\SymfonyKernelEventListener\HandleSymfonyApiErrors:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception}
 
     ## configure domain event publishers and its subscribers
     ## add to arguments key your custom and additional subscribers

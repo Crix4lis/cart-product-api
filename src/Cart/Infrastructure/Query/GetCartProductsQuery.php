@@ -33,7 +33,7 @@ class GetCartProductsQuery extends ServiceEntityRepository
     public function execute(string $cartUuid, int $page): array
     {
         if ($page <= 0) {
-            throw new InvalidInputException();
+            throw new InvalidInputException("page query parameter must be over 0");
         }
 
         $offset = ($page - 1) * self::PER_PAGE;

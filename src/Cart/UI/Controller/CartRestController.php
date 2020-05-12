@@ -39,7 +39,6 @@ class CartRestController extends AbstractController
      * @throws InvalidInputException
      * @throws ConflictException
      * @throws DataLayerException
-     * @throws InvalidInputException
      */
     public function create(
         Request $request,

@@ -56,7 +56,7 @@ class DoctrineCarts extends ServiceEntityRepository implements Carts
             $em->persist($cart);
             $em->flush();
         } catch (UniqueConstraintViolationException $e) {
-            throw new ConflictException();
+            throw new ConflictException(sprintf("Cart with id %s already exists", $cart->getCartId()));
         } catch (\Exception $e) {
             throw new DataLayerException($e->getMessage(), $e->getCode(), $e);
         }

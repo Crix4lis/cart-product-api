@@ -56,7 +56,12 @@ class DoctrineProducts extends ServiceEntityRepository implements Products
             $em->persist($product);
             $em->flush();
         } catch (UniqueConstraintViolationException $e) {
-            throw new ConflictException();
+            throw new ConflictException(
+                sprintf("Product with id %s or with title %s already exists",
+                    $product->getId(),
+                    $product->getTitle()
+                )
+            );
         } catch (\Exception $e) {
             throw new DataLayerException($e->getMessage(), $e->getCode(), $e);
         }

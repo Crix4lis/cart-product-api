@@ -31,7 +31,7 @@ class CreateNewCartHandler
         try {
             $cart = Cart::createNewCart($command->getNewCartId(), new Product($command->getCartProductReference()));
         } catch (\InvalidArgumentException $e) {
-            throw new InvalidInputException();
+            throw new InvalidInputException("Cart id must be in uuid format");
         }
 
         $this->carts->save($cart);

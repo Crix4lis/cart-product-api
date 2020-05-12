@@ -37,7 +37,7 @@ class CreateNewProductHandler
                 Price::createUSD($command->getPriceAmount())
             );
         } catch (\InvalidArgumentException $e) {
-            throw new InvalidInputException();
+            throw new InvalidInputException("Amount or product id is invalid");
         }
 
         $this->products->save($product);

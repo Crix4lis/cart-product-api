@@ -18,21 +18,25 @@ class EditProductValidator extends ProductBaseValidator
         $amountKeyExists = $this->amountKeyExists($input);
 
         if (false === $titleKeyExists && false === $amountKeyExists) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf(
+                "Key %s or %s must be provided",
+                self::TITLE_KEY,
+                self::AMOUNT_KEY
+            ));
         }
 
         //if title exists - validate it
         if (true === $titleKeyExists &&
             false === $this->validateIfFieldIsNonEmptyString($input[self::TITLE_KEY])
         ) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf("Field %s must be not empty string", self::TITLE_KEY));
         }
 
         //if amount exists - validate it
         if (true === $amountKeyExists
             && false === $this->validateAmount($input[self::AMOUNT_KEY])
         ) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf("Field %s must be integerish string", self::AMOUNT_KEY));
         }
     }
 }

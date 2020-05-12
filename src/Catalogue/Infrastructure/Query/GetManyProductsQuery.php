@@ -31,7 +31,7 @@ class GetManyProductsQuery extends ServiceEntityRepository
     public function execute(int $page): array
     {
         if ($page <= 0) {
-            throw new InvalidInputException();
+            throw new InvalidInputException("Page query parameter must be over 0");
         }
 
         $offset = ($page - 1) * self::PER_PAGE;

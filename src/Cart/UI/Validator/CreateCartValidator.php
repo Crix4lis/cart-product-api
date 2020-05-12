@@ -15,11 +15,11 @@ class CreateCartValidator extends CartBaseValidator
     public function validate(array $input): void
     {
         if (false === $this->productIdKeyExists($input)) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf("Missing key: %s", self::PRODUCT_REFERENCE_KEY));
         }
 
         if (false === $this->validateIfFieldIsNonEmptyString($input[self::PRODUCT_REFERENCE_KEY])) {
-            throw new InvalidInputException();
+            throw new InvalidInputException(sprintf("Field %s must be not empty string", self::PRODUCT_REFERENCE_KEY));
         }
     }
 }

@@ -35,7 +35,7 @@ class EditProductHandler
             try {
                 $product->changeProductTitle($newTitle);
             } catch (\InvalidArgumentException $e) {
-                throw new InvalidInputException();
+                throw new InvalidInputException("Product title must not be empty string");
             }
         }
 
@@ -43,7 +43,9 @@ class EditProductHandler
             try {
                 $product->changeProductPrice(Price::createUSD($newPriceValue));
             } catch (\InvalidArgumentException $e) {
-                throw new InvalidInputException();
+                throw new InvalidInputException(
+                    "Product price amount must be provided as integerish string of cents. Ex.: \"500\" meaning 5.00$"
+                );
             }
         }
 
