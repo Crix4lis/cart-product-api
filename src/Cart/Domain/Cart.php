@@ -8,9 +8,11 @@ use Task\App\Cart\Domain\Event\CartEmptied;
 use Task\App\Cart\Domain\Event\NewCartCreated;
 use Task\App\Cart\Domain\Event\ProductAdded;
 use Task\App\Cart\Domain\Event\ProductRemoved;
+use Task\App\Cart\Domain\Exception\ProductNotFoundInCart;
 use Task\App\Cart\Domain\Exception\TooManyProductsInCartException;
 use Task\App\Common\Event\AggregateWithEvents;
 use Task\App\Common\Event\DomainEvent;
+use Webmozart\Assert\Assert;
 
 class Cart implements AggregateWithEvents
 {
@@ -21,12 +23,21 @@ class Cart implements AggregateWithEvents
      * ArrayCollection of
      * @see \Task\App\Cart\Domain\Product
      */
-    private ArrayCollection $productReferences;
+    private iterable $productReferences;
     /** @var DomainEvent[] */
     private array $events = [];
 
+    /**
+     * @param string $cartId
+     * @param Product $productInCart
+     *
+     * @return Cart
+     *
+     * @throws \InvalidArgumentException
+     */
     public static function createNewCart(string $cartId, Product $productInCart): Cart
     {
+        Assert::uuid($cartId);
         $cart = new self($cartId, $productInCart);
         $cart->events[] = new NewCartCreated(
             $cart->getCartId(),
@@ -51,13 +62,25 @@ class Cart implements AggregateWithEvents
         $this->events[] = new ProductAdded($this->getCartId(), $product->getProductId());
     }
 
+    /**
+     * @param Product $productToRemove
+     *
+     * @throws ProductNotFoundInCart
+     */
     public function removeProduct(Product $productToRemove): void
     {
+        $keys = $this->productReferences->getKeys();
+        $lastKey = end($keys);
+
         foreach ($this->productReferences as $key => $product) {
-            if ($product->equals($product)) {
+            if ($product->equals($productToRemove)) {
                 $this->productReferences->remove($key);
                 $this->events[] = new ProductRemoved($this->getCartId(), $product->getProductId());
                 break;
+            }
+
+            if ($key === $lastKey) {
+                throw new ProductNotFoundInCart($this->cartId, $productToRemove->getProductId());
             }
         }
 
@@ -75,6 +98,11 @@ class Cart implements AggregateWithEvents
     public function getCartId(): string
     {
         return $this->cartId;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->productReferences->count() === 0;
     }
 
     /** @return Product[] */

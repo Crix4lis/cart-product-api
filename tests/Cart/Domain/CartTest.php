@@ -19,8 +19,8 @@ class CartTest extends TestCase
     public function cartDataProvider(): array
     {
         return [
-            'first cart' => ['1', '1'],
-            'second cart' => ['2', '1'],
+            'first cart' => [UuidMotherObject::createFirst(), UuidMotherObject::createThird()],
+            'second cart' => [UuidMotherObject::createFirst(), UuidMotherObject::createSecond()],
         ];
     }
 
@@ -29,7 +29,6 @@ class CartTest extends TestCase
      */
     public function testCreatesCart(string $cartId, string $productId): void
     {
-        UuidMotherObject::createOne();
         $expectedEvent = new NewCartCreated($cartId, $productId);
 
         $cart = Cart::createNewCart($cartId, new Product($productId));
@@ -43,7 +42,7 @@ class CartTest extends TestCase
      */
     public function testAddsProductToCart(string $cartId, string $productId): void
     {
-        $productIdToAdd = '5';
+        $productIdToAdd = UuidMotherObject::createSecond();
         $expectedEvent = new ProductAdded($cartId, $productIdToAdd);
 
         $cart = CartBuilder::cart()
@@ -66,7 +65,7 @@ class CartTest extends TestCase
 
         $cart = CartBuilder::cart()
             ->withCartId($cartId)
-            ->withProductIds($productId, '555')
+            ->withProductIds($productId, UuidMotherObject::createThird())
             ->build();
 
         $cart->removeProduct(new Product($productId));
@@ -103,9 +102,9 @@ class CartTest extends TestCase
         $this->expectException(TooManyProductsInCartException::class);
         $cart = CartBuilder::cart()
             ->withCartId($cartId)
-            ->withProductIds($productId, '111', '222')
+            ->withProductIds($productId, UuidMotherObject::createFirst(), UuidMotherObject::createSecond())
             ->build();
 
-        $cart->addProduct(new Product('444'));
+        $cart->addProduct(new Product(UuidMotherObject::createThird()));
     }
 }

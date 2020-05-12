@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Task\App\Cart\Domain\Exception;
 
-use Task\App\Common\Exception\DomainException;
+use Task\App\Common\Exception\RuntimeException;
 
-class TooManyProductsInCartException extends DomainException
+class TooManyProductsInCartException extends RuntimeException
 {
     public function __construct(int $maximum, string $cartId)
     {

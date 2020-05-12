@@ -10,16 +10,35 @@ use Symfony\Component\HttpFoundation\Request;
 use Task\App\Cart\Application\AddProductToCartCommand;
 use Task\App\Cart\Application\CreateNewCartCommand;
 use Task\App\Cart\Application\RemoveProductFromCartCommand;
-use Task\App\Cart\Infrastructure\GetCartProductsQuery;
+use Task\App\Cart\Domain\Exception\ProductNotFoundInCart;
+use Task\App\Cart\Domain\Exception\TooManyProductsInCartException;
+use Task\App\Cart\Infrastructure\Query\GetCartProductsQuery;
 use Task\App\Cart\UI\Validator\AddProductValidator;
 use Task\App\Cart\UI\Validator\CartBaseValidator;
 use Task\App\Cart\UI\Validator\CreateCartValidator;
+use Task\App\Common\Exception\ConflictException;
+use Task\App\Common\Exception\DataLayerException;
 use Task\App\Common\Exception\InvalidInputException;
+use Task\App\Common\Exception\NotFoundException;
 use Task\App\Common\Generator\UuidGenerator;
 use Task\App\Common\Parser\Parser;
 
 class CartRestController extends AbstractController
 {
+    /**
+     * @param Request $request
+     * @param CommandBus $commandBus
+     * @param Parser $parser
+     * @param CreateCartValidator $validator
+     * @param UuidGenerator $uuidGenerator
+     *
+     * @return JsonResponse
+     *
+     * @throws InvalidInputException
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws InvalidInputException
+     */
     public function create(
         Request $request,
         CommandBus $commandBus,
@@ -29,17 +48,11 @@ class CartRestController extends AbstractController
     ): JsonResponse
     {
         $data = $parser->parse($request->getContent());
-        if (false === $validator->validate($data)) {
-            throw new InvalidInputException();
-        }
+        $validator->validate($data);
 
         $newCartId = $uuidGenerator->generate();
         $cmd = new CreateNewCartCommand($newCartId, $data[CartBaseValidator::PRODUCT_REFERENCE_KEY]);
-            //        try {
-            $commandBus->handle($cmd);
-//        } catch () {
-//            throw new ConflictException(sprintf("Product with title %s already exists", $data['title']));
-//        }
+        $commandBus->handle($cmd);
 
         return new JsonResponse(
             ['new_cart_id' => $newCartId],
@@ -48,6 +61,21 @@ class CartRestController extends AbstractController
         );
     }
 
+    /**
+     * @param string $id
+     * @param Request $request
+     * @param Parser $parser
+     * @param CommandBus $commandBus
+     * @param AddProductValidator $validator
+     *
+     * @return JsonResponse
+     *
+     * @throws InvalidInputException
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws TooManyProductsInCartException
+     */
     public function addProduct(
         string $id,
         Request $request,
@@ -57,20 +85,26 @@ class CartRestController extends AbstractController
     ): JsonResponse
     {
         $data = $parser->parse($request->getContent());
-        if (false === $validator->validate($data)) {
-            throw new InvalidInputException();
-        }
+        $validator->validate($data);
 
         $cmd = new AddProductToCartCommand($id, $data[AddProductValidator::PRODUCT_REFERENCE_KEY]);
-        //        try {
         $commandBus->handle($cmd);
-//        } catch () {
-//            throw new NotFoundException();
-//        }
 
         return new JsonResponse();
     }
 
+    /**
+     * @param string $id
+     * @param string $productId
+     * @param CommandBus $commandBus
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundException
+     * @throws ProductNotFoundInCart
+     * @throws ConflictException
+     * @throws DataLayerException
+     */
     public function removeProduct(
         string $id,
         string $productId,
@@ -78,15 +112,20 @@ class CartRestController extends AbstractController
     ): JsonResponse
     {
         $cmd = new RemoveProductFromCartCommand($id, $productId);
-        //        try {
         $commandBus->handle($cmd);
-//        } catch () {
-//            throw new NotFoundException();
-//        }
 
         return new JsonResponse();
     }
 
+    /**
+     * @param string $id
+     * @param Request $request
+     * @param GetCartProductsQuery $query
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundException
+     */
     public function getCartProducts(
         string $id,
         Request $request,
@@ -94,15 +133,8 @@ class CartRestController extends AbstractController
     ): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
+        $result = $query->execute($id, $page);
 
-        return new JsonResponse('OK');
-
-//        try {
-        $result = $query->execute($page);
-//        } catch () {
-//            throw new NotFoundException();
-//        }
-
-        return new JsonResponse($request);
+        return new JsonResponse($result);
     }
 }

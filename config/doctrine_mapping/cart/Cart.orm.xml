@@ -12,6 +12,9 @@
             <generator strategy="NONE"/>
         </id>
         <many-to-many field="productReferences" target-entity="Task\App\Cart\Domain\Product">
+            <cascade>
+                <cascade-all/>
+            </cascade>
             <join-table name="cart_products">
                 <join-columns>
                     <join-column name="cart_uuid" referenced-column-name="uuid" />

@@ -6,6 +6,9 @@ namespace Task\App\Cart\Application;
 use Task\App\Cart\Domain\Cart;
 use Task\App\Cart\Domain\Carts;
 use Task\App\Cart\Domain\Product;
+use Task\App\Common\Exception\ConflictException;
+use Task\App\Common\Exception\DataLayerException;
+use Task\App\Common\Exception\InvalidInputException;
 
 class CreateNewCartHandler
 {
@@ -16,9 +19,21 @@ class CreateNewCartHandler
         $this->carts = $carts;
     }
 
+    /**
+     * @param CreateNewCartCommand $command
+     *
+     * @throws ConflictException
+     * @throws DataLayerException
+     * @throws InvalidInputException
+     */
     public function handle(CreateNewCartCommand $command): void
     {
-        $cart = Cart::createNewCart($command->getNewCartId(), new Product($command->getCartProductReference()));
+        try {
+            $cart = Cart::createNewCart($command->getNewCartId(), new Product($command->getCartProductReference()));
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidInputException();
+        }
+
         $this->carts->save($cart);
     }
 }
