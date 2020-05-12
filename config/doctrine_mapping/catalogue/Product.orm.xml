@@ -11,7 +11,7 @@
         <id name="id" type="string" column="uuid">
             <generator strategy="NONE"/>
         </id>
-        <field name="title" column="title" type="string"/>
+        <field name="title" column="title" type="string" unique="true"/>
         <field name="isRemoved" column="removed" type="boolean"/>
         <embedded name="price" class="Task\App\Common\Price\Price"/>
     </entity>

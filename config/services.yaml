@@ -19,47 +19,47 @@ services:
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
-#    App\Controller\:
-#        resource: '../src/Controller'
-#        tags: ['controller.service_arguments']
+    Task\App\Catalogue\UI\Controller\:
+        resource: '../src/Catalogue/UI/Controller'
+        tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
     ## handlers
-#    Task\App\Cart\Application\CreateNewCartHandler:
-#        class: Task\App\Cart\Application\CreateNewCartHandler
-#        arguments:
-#            $products: '@repo' # todo
-#        tags:
-#            - { name: tactician.handler, typehints: true }
-#    Task\App\Cart\Application\AddProductToCartHandler:
-#        class: Task\App\Cart\Application\AddProductToCartHandler
-#        arguments:
-#            $products: '@repo' # todo
-#        tags:
-#            - { name: tactician.handler, typehints: true }
-#    Task\App\Cart\Application\RemoveProductFromCartHandler:
-#        class: Task\App\Cart\Application\RemoveProductFromCartHandler
-#        arguments:
-#            $products: '@repo' # todo
-#        tags:
-#            - { name: tactician.handler, typehints: true }
-#    Task\App\Catalogue\Application\CreateNewProductHandler:
-#        class: Task\App\Catalogue\Application\CreateNewProductHandler
-#        arguments:
-#            $products: '@repo' # todo
-#        tags:
-#            - { name: tactician.handler, typehints: true }
-#    Task\App\Catalogue\Application\RemoveProductHandler:
-#        class: Task\App\Catalogue\Application\RemoveProductHandler
-#        arguments:
-#            $products: '@repo' # todo
-#        tags:
-#            - { name: tactician.handler, typehints: true }
-#    Task\App\Catalogue\Application\EditProductHandler:
-#        class: Task\App\Catalogue\Application\EditProductHandler
-#        arguments:
-#            $products: '@repo' # todo
-#        tags:
-#            - { name: tactician.handler, typehints: true }
+    Task\App\Cart\Application\CreateNewCartHandler:
+        class: Task\App\Cart\Application\CreateNewCartHandler
+        arguments:
+            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Cart\Application\AddProductToCartHandler:
+        class: Task\App\Cart\Application\AddProductToCartHandler
+        arguments:
+            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Cart\Application\RemoveProductFromCartHandler:
+        class: Task\App\Cart\Application\RemoveProductFromCartHandler
+        arguments:
+            $carts: '@Task\App\Cart\Infrastructure\Repository\DoctrineCarts'
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Catalogue\Application\CreateNewProductHandler:
+        class: Task\App\Catalogue\Application\CreateNewProductHandler
+        arguments:
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Catalogue\Application\RemoveProductHandler:
+        class: Task\App\Catalogue\Application\RemoveProductHandler
+        arguments:
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+        tags:
+            - { name: tactician.handler, typehints: true }
+    Task\App\Catalogue\Application\EditProductHandler:
+        class: Task\App\Catalogue\Application\EditProductHandler
+        arguments:
+            $products: '@Task\App\Catalogue\Infrastructure\Repository\DoctrineProducts'
+        tags:
+            - { name: tactician.handler, typehints: true }

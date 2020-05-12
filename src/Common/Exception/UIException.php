@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace Task\App\Common\Exception;
 
-abstract class DomainException extends \RuntimeException
+abstract class UIException extends \RuntimeException
 {
 }

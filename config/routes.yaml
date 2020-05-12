@@ -1,3 +1,19 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+catalogue_create_product:
+    path: /products
+    controller: Task\App\Catalogue\UI\Controller\CatalogueController::create
+    methods: POST
+
+catalogue_get_products:
+    path: /products
+    controller: Task\App\Catalogue\UI\Controller\CatalogueController::getList
+    methods: GET
+
+catalogue_remove_product:
+    path: /products/{id}
+    controller: Task\App\Catalogue\UI\Controller\CatalogueController::remove
+    methods: DELETE
+
+catalogue_edit_product:
+    path: /products/{id}
+    controller: Task\App\Catalogue\UI\Controller\CatalogueController::edit
+    methods: PUT
