@@ -18,7 +18,7 @@ use Task\App\Common\Exception\InvalidInputException;
 use Task\App\Common\Generator\UuidGenerator;
 use Task\App\Common\Parser\Parser;
 
-class CatalogueController extends AbstractController
+class CatalogueRestController extends AbstractController
 {
     public function create(
         Request $request,

@@ -1,19 +1,39 @@
 catalogue_create_product:
     path: /products
-    controller: Task\App\Catalogue\UI\Controller\CatalogueController::create
+    controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::create
     methods: POST
 
 catalogue_get_products:
     path: /products
-    controller: Task\App\Catalogue\UI\Controller\CatalogueController::getList
+    controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::getList
     methods: GET
 
 catalogue_remove_product:
     path: /products/{id}
-    controller: Task\App\Catalogue\UI\Controller\CatalogueController::remove
+    controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::remove
     methods: DELETE
 
 catalogue_edit_product:
     path: /products/{id}
-    controller: Task\App\Catalogue\UI\Controller\CatalogueController::edit
+    controller: Task\App\Catalogue\UI\Controller\CatalogueRestController::edit
     methods: PUT
+
+cart_create_cart:
+    path: /carts
+    controller: Task\App\Cart\UI\Controller\CartRestController::create
+    methods: POST
+
+cart_add_product:
+    path: /carts/{id}/products
+    controller: Task\App\Cart\UI\Controller\CartRestController::addProduct
+    methods: POST
+
+cart_remove_product:
+    path: /carts/{id}/products/{productId}
+    controller: Task\App\Cart\UI\Controller\CartRestController::removeProduct
+    methods: DELETE
+
+cart_get_cart_products:
+    path: /carts/{id}/products
+    controller: Task\App\Cart\UI\Controller\CartRestController::getCartProducts
+    methods: GET
