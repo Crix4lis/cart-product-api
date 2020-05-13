@@ -27,7 +27,7 @@
     
 1. Edit product, input data:
 
-   `PUT /products`, input data:
+   `PUT /products/{id}`, input data:
    ```json
     {
         "title": "The title 11",
