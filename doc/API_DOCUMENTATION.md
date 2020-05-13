@@ -111,7 +111,7 @@
 1. Add product to cart
     > Operation non idempotent
 
-   `PUT /cart/{id}/products`, input data:
+   `POST /cart/{id}/products`, input data:
    ```json
     {
         "product_id": "30fa6fa1-ec95-4425-a1f6-4c4ab918588f"
